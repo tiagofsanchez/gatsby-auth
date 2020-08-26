@@ -26,6 +26,8 @@ export default function NavBar() {
         {` `}
         <Link to="/app/profile">Profile</Link>
         {` `}
+        <Link to="/account">Account</Link>
+        {` `}
         {isLoggedIn() ? (
           <a
             href="/"
