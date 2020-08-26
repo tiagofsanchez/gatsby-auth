@@ -1,6 +1,7 @@
 import React from "react"
 import { Link, navigate } from "gatsby"
 import { getUser, isLoggedIn, logout } from "../services/auth"
+import { isAuthenticated, logoutAuth } from "../services/auth0"
 
 export default function NavBar() {
   let greetingMessage = ""
@@ -28,6 +29,18 @@ export default function NavBar() {
         {` `}
         <Link to="/account">Account</Link>
         {` `}
+        {isAuthenticated() ? (
+          <a
+            href="#logout"
+            onClick={e => {
+              logoutAuth()
+              e.preventDefault()
+            }}
+          >
+            Logout account
+          </a>
+        ) : null}
+        {` `}
         {isLoggedIn() ? (
           <a
             href="/"
@@ -36,7 +49,7 @@ export default function NavBar() {
               logout(() => navigate(`/app/login`))
             }}
           >
-            Logout
+            Logout Profile
           </a>
         ) : null}
       </nav>

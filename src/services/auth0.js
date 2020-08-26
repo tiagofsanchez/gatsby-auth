@@ -28,28 +28,47 @@ export const isAuthenticated = () => {
   return localStorage.getItem("isLoggedIn") === "true"
 }
 
-
 export const login = () => {
-    if (!isBrowser) {
-      return
-    }
-    auth.authorize()
+  if (!isBrowser) {
+    return
   }
-  const setSession = (cb = () => {}) => (err, authResult) => {
-    if (err) {
-      navigate("/")
-      cb()
-      return
-    }
-    if (authResult && authResult.accessToken && authResult.idToken) {
-      let expiresAt = authResult.expiresIn * 1000 + new Date().getTime()
-      tokens.accessToken = authResult.accessToken
-      tokens.idToken = authResult.idToken
-      tokens.expiresAt = expiresAt
-      user = authResult.idTokenPayload
-      localStorage.setItem("isLoggedIn", true)
-      navigate("/account")
-      cb()
-    }
+  auth.authorize()
+}
+const setSession = (cb = () => {}) => (err, authResult) => {
+  if (err) {
+    navigate("/")
+    cb()
+    return
   }
-  
+  if (authResult && authResult.accessToken && authResult.idToken) {
+    let expiresAt = authResult.expiresIn * 1000 + new Date().getTime()
+    tokens.accessToken = authResult.accessToken
+    tokens.idToken = authResult.idToken
+    tokens.expiresAt = expiresAt
+    user = authResult.idTokenPayload
+    localStorage.setItem("isLoggedIn", true)
+    navigate("/account")
+    cb()
+  }
+}
+
+export const handleAuthentication = () => {
+  if (!isBrowser) {
+    return
+  }
+  auth.parseHash(setSession())
+}
+
+export const getProfile = () => {
+  return user
+}
+
+export const silentAuth = (callback) => {
+    if (!isAuthenticated()) return callback
+    auth.checkSession({}, setSession(callback))
+  }
+
+  export const logoutAuth = () => {
+    localStorage.setItem("isLoggedIn", false)
+    auth.logout()
+  }
